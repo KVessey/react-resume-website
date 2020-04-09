@@ -27,6 +27,7 @@ router.post(
     }
 
     // Destructuring so we dont have to keep doing req.body to pull name email and pw from json
+    // This is used below in the new user instance
     const { name, email, password } = req.body;
 
     try {
@@ -60,6 +61,7 @@ router.post(
 
       user.password = await bcrypt.hash(password, salt); //takes plaintext password and salt, then stores into user.password instance
 
+      // Save the user to the database
       await user.save();
 
       // Return jsonwebtoken so that user gets logged in right away when registering

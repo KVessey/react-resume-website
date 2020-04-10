@@ -82,6 +82,14 @@ router.post(
           if (err) throw err; // if error is caught, we are throwing the error message
           res.json({ token }); //else the response is the json token which we send back to the client
           // Note: This token will be taken later and passed in the header to access protected routes
+          // An example response is:
+          /*{
+            "user": {  - This is the user from the payload above
+              "id": "5e90ac39d391c7359473668a"   - this corresponds to the user id in the mongo database
+            },
+            "iat": 1586539578,  - issued at timestamp
+            "exp": 1586899578   - expires at timestamp
+          }*/
         }
       );
     } catch (err) {

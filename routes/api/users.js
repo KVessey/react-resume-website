@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 // Bring in User model
@@ -65,7 +67,23 @@ router.post(
       await user.save();
 
       // Return jsonwebtoken so that user gets logged in right away when registering
-      res.send('User Registered');
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      // Signing the token, must pass payload, secret (which we defined in default.json)
+      jwt.sign(
+        payload, //pass in the payload
+        config.get('jwtSecret'), // get secret defined in default.json
+        { expiresIn: 360000 }, //in production, set to 3600 seconds which is 1 hour
+        (err, token) => {
+          if (err) throw err; // if error is caught, we are throwing the error message
+          res.json({ token }); //else the response is the json token which we send back to the client
+          // Note: This token will be taken later and passed in the header to access protected routes
+        }
+      );
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

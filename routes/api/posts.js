@@ -7,7 +7,7 @@ const Post = require('../../models/Post');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
-// @route   GET api/posts
+// @route   POST api/posts
 // @desc    Create a post
 // @access  Private
 router.post(
@@ -39,5 +39,72 @@ router.post(
     }
   }
 );
+
+// @route   GET api/posts
+// @desc    Get all posts
+// @access  Private
+router.get('/', auth, async (req, res) => {
+  try {
+    // Sorting by a date of -1 will give most recent post first
+    const posts = await Post.find().sort({ date: -1 });
+    res.json(posts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   GET api/posts/:id
+// @desc    Get post by id
+// @access  Private
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+
+    res.json(post);
+  } catch (err) {
+    console.error(err.message);
+    // If the error is equal to ObjectId, it means its not a formatted object id which means no post will be found
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   DELETE api/posts/:id
+// @desc    Delete a posts
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    // Sorting by a date of -1 will give most recent post first
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+
+    // Make sure the user deleting the post is the user which is logged in
+    // Must convert post.user (which is an object) to a string to match against the req.user.id string
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User not authorized' });
+    }
+
+    await post.remove();
+
+    res.json({ msg: 'Post Removed' });
+  } catch (err) {
+    console.error(err.message);
+    // If the error is equal to ObjectId, it means its not a formatted object id which means no post will be found
+    if (err.kind == 'ObjectId') {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
 
 module.exports = router;

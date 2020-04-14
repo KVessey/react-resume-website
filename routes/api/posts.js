@@ -100,9 +100,79 @@ router.delete('/:id', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     // If the error is equal to ObjectId, it means its not a formatted object id which means no post will be found
-    if (err.kind == 'ObjectId') {
+    if (err.kind === 'ObjectId') {
       return res.status(404).json({ msg: 'Post not found' });
     }
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT api/posts/like/:id
+// @desc    Like a post
+// @access  Private
+router.put('/like/:id', auth, async (req, res) => {
+  try {
+    // Find post from Post model by id in request parameters
+    const post = await Post.findById(req.params.id);
+
+    // Check if post has already been liked by this user
+    // Check if the post liked by user === the user which is logged in(from the request)
+    // The filter will only return a value if like.user.toString() === req.user.id. If the length is > 0, that means the post is already liked by this user
+    if (
+      post.likes.filter((like) => like.user.toString() === req.user.id).length >
+      0
+    ) {
+      return res.status(400).json({ msg: 'Post already liked' });
+    }
+
+    // If the post is not already liked, we push it onto the array using unshift, which adds the post to the beginning
+    post.likes.unshift({ user: req.user.id });
+
+    // Save to database
+    await post.save();
+
+    res.json(post.likes);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT api/posts/unlike/:id
+// @desc    Unlike a post
+// @access  Private
+router.put('/unlike/:id', auth, async (req, res) => {
+  try {
+    // Find post from Post model by id in request parameters
+    const post = await Post.findById(req.params.id);
+
+    /* Check if post has already been liked by this user
+       Check if the post liked by user === the user which is logged in(from the request)
+       The filter will only return a value if like.user.toString() === req.user.id. 
+       If the length is === 0, that means we have not liked the post yet so we cannot "unlike" it
+    */
+    if (
+      post.likes.filter((like) => like.user.toString() === req.user.id)
+        .length === 0
+    ) {
+      return res.status(400).json({ msg: 'Post has not yet been liked' });
+    }
+
+    // Get remove index
+    // For each like, return like.user in string format. Then we get the index of the id which was sent in the request
+    const removeIndex = post.likes
+      .map((like) => like.user.toString())
+      .indexOf(req.user.id);
+
+    // Splice out of the array
+    post.likes.splice(removeIndex, 1);
+
+    // Save to database
+    await post.save();
+
+    res.json(post.likes);
+  } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });

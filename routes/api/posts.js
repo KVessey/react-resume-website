@@ -177,4 +177,89 @@ router.put('/unlike/:id', auth, async (req, res) => {
   }
 });
 
+// @route   POST api/posts/comment/:id
+// @desc    Comment on a Post
+// @access  Private
+// @todo Add likes into comments like we did for posts
+router.post(
+  '/comment/:id',
+  [auth, [check('text', 'Text is required').not().isEmpty()]],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const user = await User.findById(req.user.id).select('-password'); //Do not want to send the password back, just user id
+
+      // Get post by id
+      const post = await Post.findById(req.params.id);
+
+      // Construct a new comment
+      const newComment = {
+        text: req.body.text,
+        // Name and avatar come from user model
+        name: user.name,
+        avatar: user.avatar,
+        user: req.user.id,
+      };
+
+      // Add new comment to the beginning with unshift
+      post.comments.unshift(newComment);
+
+      await post.save();
+
+      res.json(post.comments);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+// @route   DELETE api/posts/comment/:id/:comment_id
+// @desc    Delete a comment from a post (need both post and comment id)
+// @access  Private
+router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
+  try {
+    // Get post by id
+    const post = await Post.findById(req.params.id);
+
+    // Pull out comment from post array
+    // For each comment => check if comment id === the comment id send via the request parameters
+    const comment = post.comments.find(
+      (comment) => comment.id === req.params.comment_id
+    );
+
+    // Make sure the comment exists
+    if (!comment) {
+      return res.status(404).json({ msg: 'Comment does not exist' });
+    }
+
+    // Check user that is deleting the comment is the user which made the comment
+    // Check if comment.user object id (converted to a string) is not equal to logged in user, then return 401
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User not authorized' });
+    }
+
+    // Get remove index
+    // For each like, return like.user in string format. Then we get the index of the id which was sent in the request
+    const removeIndex = post.comments
+      .map((comment) => comment.user.toString())
+      .indexOf(req.user.id);
+
+    // Splice out of the array
+    post.comments.splice(removeIndex, 1);
+
+    // Save to database
+    await post.save();
+
+    res.json(post.comments);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;

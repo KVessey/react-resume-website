@@ -262,4 +262,5 @@ router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
   }
 });
 
+// @todo Add functionality to update comments
 module.exports = router;

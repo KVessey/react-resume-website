@@ -1,7 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types';
 
-const Register = () => {
+// Put setAlert here to destructure so we dont have to call props.setAlert
+const Register = ({ setAlert }) => {
   // State is formData, which is an object with all of the field values
   // setFormData is the function we will use to update state
   const [formData, setFormData] = useState({
@@ -23,7 +27,7 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== password2) {
-      console.log('Passwords do not match');
+      setAlert('Passwords do not match', 'danger');
     } else {
       console.log('SUCCESS');
     }
@@ -89,4 +93,9 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+};
+
+// This allows us to access props.setAlert
+export default connect(null, { setAlert })(Register);

@@ -48,7 +48,7 @@ const EditProfile = ({
       instagram:
         loading || !profile.social.instagram ? '' : profile.social.instagram,
     });
-  }, [loading]); // This is the prop setFormData depends on. So when the object is loading, this setFormData will run
+  }, [loading, getCurrentProfile]); // This is the prop setFormData depends on. So when the object is loading, this setFormData will run
 
   const {
     company,

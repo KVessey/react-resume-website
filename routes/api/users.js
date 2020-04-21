@@ -77,7 +77,7 @@ router.post(
       jwt.sign(
         payload, //pass in the payload
         config.get('jwtSecret'), // get secret defined in default.json
-        { expiresIn: 360000 }, //in production, set to 3600 seconds which is 1 hour
+        { expiresIn: 3600 }, //in production, set to 3600 seconds which is 1 hour
         (err, token) => {
           if (err) throw err; // if error is caught, we are throwing the error message
           res.json({ token }); //else the response is the json token which we send back to the client

@@ -21,7 +21,7 @@ const CommentItem = ({
     <div>
       <p class='my-1'>{text}</p>
       <p class='post-date'>
-        Posted on <Moment format='YYYY/MM/DD'>{date}</Moment>
+        Posted on <Moment format='MM/DD/YYYY'>{date}</Moment>
       </p>
       {/* If auth is not loading, and the user matches the user which is logged in, then we will have button to remove comment */}
       {!auth.loading && user === auth.user._id && (

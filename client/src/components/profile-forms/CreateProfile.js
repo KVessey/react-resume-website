@@ -57,9 +57,13 @@ const CreateProfile = ({ createProfile, history }) => {
         <div className='form-group'>
           <select name='status' value={status} onChange={(e) => onChange(e)}>
             <option value='0'>* Select Professional Status</option>
-            <option value='Developer'>Developer</option>
-            <option value='Junior Developer'>Junior Developer</option>
-            <option value='Senior Developer'>Senior Developer</option>
+            <option value='Junior Software Engineer'>
+              Junior Software Engineer
+            </option>
+            <option value='Software Engineer'>Software Engineer</option>
+            <option value='Senior Software Engineer'>
+              Senior Software Engineer
+            </option>
             <option value='Manager'>Manager</option>
             <option value='Student or Learning'>Student or Learning</option>
             <option value='Instructor'>Instructor or Teacher</option>

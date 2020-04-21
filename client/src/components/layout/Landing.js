@@ -12,11 +12,14 @@ const Landing = ({ isAuthenticated }) => {
     <section className='landing'>
       <div className='dark-overlay'>
         <div className='landing-inner'>
-          <h1 className='x-large'>Developer Connector</h1>
+          <h1 className='x-large'>Kyle Vessey</h1>
           <p className='lead'>
-            Create a developer profile/portfolio, share posts and get help from
-            other developers
+            Resume portfolio website showcasing MERN stack technical skills.
           </p>
+          {/* <p>
+            This website was built with MongoDB, Express.js, React.js, and
+            Node.js.
+          </p> */}
           <div className='buttons'>
             <Link to='/register' className='btn btn-primary'>
               Sign Up

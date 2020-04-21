@@ -12,7 +12,7 @@ const ProfileAbout = ({
     {bio && (
       // Use split to take only the first name for the bio
       <Fragment>
-        <h2 class='text-primary'>{name.trim().split(' ')[0]}'s Bio</h2>
+        <h2 class='text-primary'>{name.trim().split(' ')[0]}'s Biography</h2>
         <p>{bio}</p>
         <div class='line'></div>
       </Fragment>

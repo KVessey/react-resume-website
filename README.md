@@ -42,7 +42,8 @@ This will import all of the dependencies needed for this project, which are list
 Have a bug or an issue with this template? [Open a new issue](https://github.com/KVessey/react-resume-website/issues) here on GitHub
 
 
-## Future Work For AWCWA
+## Future Work For React Resume Website
+- [ ] Create About page within application
 - [ ] Create localization files for multinational labels
 - [ ] Create contact info page for my personal resume
 - [ ] Add a telephone number field for users to enter an optional TN

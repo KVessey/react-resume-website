@@ -1,4 +1,4 @@
-# react-resume-website
+# About Page - react-resume-website
 This application is intented to be my personal portfolio / website application to showcase some of my Software Engineering skills. It features a social media style blog where users can register an account, add their professional experiences and education, as well as post in a blog to connect with others who access this site.
 
 This app was built using the MERN stack, which I had used the following technologies to build and deploy:
